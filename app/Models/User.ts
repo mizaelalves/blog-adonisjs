@@ -1,31 +1,39 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, computed } from '@ioc:Adonis/Lucid/Orm'
+import CamelCaseNamingStrategy from '../Strategies/CamelCaseNamingStrategy'
 
 export default class User extends BaseModel {
+  public static SnakeCaseNamingStrategy = new CamelCaseNamingStrategy()
+
   @column({ isPrimary: true })
-  public id: number
+  public id!: number
 
   @column()
-  public email: string
+  public email!: string
 
   @column({ serializeAs: null })
-  public password: string
+  public password!: string
 
   @column()
-  public name: string
+  public name!: string
+
+  @computed()
+  public get firstName() {
+    return this.name.split(' ')[0]
+  }
 
   @column()
-  public role: 'admin' | 'normal'
+  public role!: 'admin' | 'normal'
 
   @column()
-  public rememberMeToken: string | null
+  public rememberMeToken!: string | null
 
   @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  public createdAt!: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  public updatedAt!: DateTime
 
   @beforeSave()
   public static async hashPassword(user: User) {

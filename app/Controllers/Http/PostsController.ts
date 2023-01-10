@@ -4,10 +4,12 @@ import { StoreValidator, UpdateValidator } from 'App/Validators/Post'
 //import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class PostsController {
-  public async index({ }: HttpContextContract) {
-    const posts = await Post.all()
+  public async index({}: HttpContextContract) {
+    const posts = await Post.query().orderBy('id').preload('author')
 
-    return posts
+    const postJson = posts.map((post) => post.serialize())
+
+    return postJson
   }
 
   public async store({ request, auth }: HttpContextContract) {
@@ -18,7 +20,9 @@ export default class PostsController {
 
     await post.load('author')
 
-    return post
+    const postJson = post.serialize()
+
+    return postJson
   }
 
   public async show({ params }: HttpContextContract) {
@@ -31,7 +35,9 @@ export default class PostsController {
     }
     */
     await post.load('author')
-    return post
+    const postJson = post.serialize()
+
+    return postJson
   }
 
   public async update({ request, params }: HttpContextContract) {
@@ -43,7 +49,9 @@ export default class PostsController {
 
     await post.save()
 
-    return post
+    const postJson = post.serialize()
+
+    return postJson
   }
 
   public async destroy({ params }: HttpContextContract) {
